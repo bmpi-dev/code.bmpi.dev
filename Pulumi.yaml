@@ -1,0 +1,3 @@
+name: code-bmpi
+runtime: nodejs
+description: VS Code Server for BMPI
