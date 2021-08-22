@@ -1,3 +1,6 @@
+#!/bin/bash
+set -ex
+
 # Disable pointless daemons
 # systemctl stop snapd snapd.socket lxcfs snap.amazon-ssm-agent.amazon-ssm-agent
 # systemctl disable snapd snapd.socket lxcfs snap.amazon-ssm-agent.amazon-ssm-agent

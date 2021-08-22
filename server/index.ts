@@ -3,13 +3,21 @@ import * as aws from "@pulumi/aws";
 import { InstanceType } from "@pulumi/aws/types/enums/ec2";
 import { readFileSync } from 'fs';
 
-const ec2KeypairName = 'bmpi-code-server'; // !create a key pair(or using a exist) with this name in aws web console first!
+const serverName = 'bmpi-code';
+
+// EC2 Key Pair
+
+const kpData = readFileSync(require('os').homedir() + '/.ssh/id_rsa.pub', 'utf-8');
+
+const kp = new aws.ec2.KeyPair(serverName + "-kp", {
+    publicKey: kpData,
+});
 
 // OS Config
 
-const ec2ImageId = 'ami-0cb5f8e033cfa84d2'; // us-east-1, Ubuntu 20.04 LTS,	AMD64, https://cloud-images.ubuntu.com/locator/ec2/
+const ec2ImageId = 'ami-0cb5f8e033cfa84d2'; // us-east-1, Ubuntu 20.04,	AMD64, https://cloud-images.ubuntu.com/locator/
 const ec2ImageOwner = '099720109477';
-const ec2InstanceName = "bmpi-code-server";
+const ec2InstanceName = serverName;
 
 const pulumiAmi = pulumi.output(aws.ec2.getAmi({
     filters: [{ name: "image-id", values: [ec2ImageId]}],
@@ -23,7 +31,7 @@ const nginxHttpPort = 80
 const nginxHttpsPort = 443
 const codeServerPort = 8080
 
-const pulumiSecurityGroup = new aws.ec2.SecurityGroup("pulumi-secgrp-bmpi-code", {
+const pulumiSecurityGroup = new aws.ec2.SecurityGroup(serverName + "-pulumi-secgrp", {
         ingress: [{
             fromPort: sshPort,
             toPort: sshPort,
@@ -59,6 +67,31 @@ const pulumiSecurityGroup = new aws.ec2.SecurityGroup("pulumi-secgrp-bmpi-code",
     },
 );
 
+// SSM Profile (Connect to instance by AWS SSM)
+
+const ssmRole = new aws.iam.Role(serverName + "-SSMRole", {
+    assumeRolePolicy: `{
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+            "Effect": "Allow",
+            "Principal": {"Service": "ec2.amazonaws.com"},
+            "Action": "sts:AssumeRole"
+            }
+        ]
+    }`
+});
+  
+  new aws.iam.RolePolicyAttachment(serverName + "-SSMAttach", {
+    policyArn: "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    role: ssmRole.name,
+  });
+  
+  const ssmProfile = new aws.iam.InstanceProfile(serverName + "-SSMProfile", {
+    name: serverName + "-SSMProfile",
+    role: ssmRole,
+  })
+
 // EC2 Config
 
 const userData = readFileSync('scripts/cloud_devops_tools.sh', 'utf-8');
@@ -68,14 +101,15 @@ let ec2Instance = new aws.ec2.Instance(
     {
         instanceType: InstanceType.T2_Medium,
         ami: pulumiAmi.id,
-        keyName: ec2KeypairName,
+        keyName: kp.keyName,
         vpcSecurityGroupIds: [pulumiSecurityGroup.id],
         rootBlockDevice: {
-            deleteOnTermination: false,
+            deleteOnTermination: true,
             volumeSize: 20,
             encrypted: true,
         },
         hibernation: true,
+        iamInstanceProfile: ssmProfile,
         userData: userData,
     }
 )
