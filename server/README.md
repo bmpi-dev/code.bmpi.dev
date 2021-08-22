@@ -1,3 +1,15 @@
+## Pulumi
+
+```
+pulumi up # setup server
+pulumi destroy # destroy server
+```
+
+```
+pulumi stack select dev
+pulumi stack output # get server public ip, instance id and public host name
+```
+
 ## SSM
 
 If you want to start EC2 instance in CLI by `SSM`, you need to give inline policy to your aws user.
