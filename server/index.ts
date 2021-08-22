@@ -94,6 +94,8 @@ const ssmRole = new aws.iam.Role(serverName + "-SSMRole", {
 
 // EC2 Config
 
+const diskSize = 50; // EC2 root disk default size is 50GB
+
 const userData = readFileSync('scripts/cloud_devops_tools.sh', 'utf-8');
 
 let ec2Instance = new aws.ec2.Instance(
@@ -105,7 +107,7 @@ let ec2Instance = new aws.ec2.Instance(
         vpcSecurityGroupIds: [pulumiSecurityGroup.id],
         rootBlockDevice: {
             deleteOnTermination: true,
-            volumeSize: 20,
+            volumeSize: diskSize,
             encrypted: true,
         },
         hibernation: true,

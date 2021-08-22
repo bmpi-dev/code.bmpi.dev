@@ -35,12 +35,12 @@ chmod +x install.sh
 HOME=/home/ubuntu ./install.sh # setup for `ubuntu` user
 printf "==> Running Code-Server as systemd service for the user '$USER' \n"
 sudo systemctl enable --now code-server@ubuntu # setup for `ubuntu` user
-# printf "==> Installing VS Code Extension: Shan.code-settings-sync. \n"
-# code-server --install-extension Shan.code-settings-sync
-# printf "==> Get a trusted Gist ID to restore extensions and configurations through Settings-Sync Extension:\n"
-# printf "==> You can use this: https://gist.github.com/chilcano/b5f88127bd2d89289dc2cd36032ce856 \n\n"
-# printf "==> Restarting Code-Server to apply changes. \n"
-# sudo systemctl restart code-server@$USER
+printf "==> Installing VS Code Extension: Shan.code-settings-sync. \n"
+code-server --install-extension Shan.code-settings-sync
+printf "==> Get a trusted Gist ID to restore extensions and configurations through Settings-Sync Extension:\n"
+printf "==> You can use this: https://gist.github.com/madawei2699/60600a4119185bc72f7ab928927150ed \n\n"
+printf "==> Restarting Code-Server to apply changes. \n"
+sudo systemctl restart code-server@ubuntu # setup for `ubuntu` user
 
 printf "==> Installing DevOps Tooling (Terraform, Packer, AWS CLI, Java and Maven). \n"
 # Download the script only so you can run it whenever you want.
