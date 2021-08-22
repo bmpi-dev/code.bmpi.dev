@@ -29,11 +29,12 @@ systemctl enable docker
 # Pass bridged IPv4 traffic to iptables chains
 service procps start
 printf "==> Installing Code-Server \n"
+cd /tmp/
 wget -q https://code-server.dev/install.sh
 chmod +x install.sh
-./install.sh
+HOME=/home/ubuntu ./install.sh # setup for `ubuntu` user
 printf "==> Running Code-Server as systemd service for the user '$USER' \n"
-sudo systemctl enable --now code-server@$USER
+sudo systemctl enable --now code-server@ubuntu # setup for `ubuntu` user
 # printf "==> Installing VS Code Extension: Shan.code-settings-sync. \n"
 # code-server --install-extension Shan.code-settings-sync
 # printf "==> Get a trusted Gist ID to restore extensions and configurations through Settings-Sync Extension:\n"
@@ -44,7 +45,8 @@ sudo systemctl enable --now code-server@$USER
 printf "==> Installing DevOps Tooling (Terraform, Packer, AWS CLI, Java and Maven). \n"
 # Download the script only so you can run it whenever you want.
 wget -qN https://raw.githubusercontent.com/bmpi-dev/how-tos/main/src/devops_tools_install_v3.sh
-chmod +x devops_tools_install_v3.sh 
+chmod +x devops_tools_install_v3.sh
+mv devops_tools_install_v3.sh /home/ubuntu/
 #. devops_tools_install_v3.sh --arch=amd
 
 printf "==> Installation of Cloud DevOps Tooling successfully !! <== \n"

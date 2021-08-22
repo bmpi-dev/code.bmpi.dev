@@ -15,6 +15,30 @@ pulumi stack output # get server public ip, instance id and public host name
 ```
 sh connect-server.sh
 ```
+
+## Config vscode server
+
+Login in server with `ubuntu` user and modify this `~/.config/code-server/config.yaml` file:
+
+```
+bind-addr: 127.0.0.1:8080 # if you want to access by server ip or domain name, then need change it to `0.0.0.0:8080`
+auth: password
+password: ***** # this is the vscode server password
+cert: false
+```
+
+## Access vscode by SSH tunnel
+
+Create a ssh tunnel:
+
+```
+ssh -nNT -L 8888:localhost:8080 ubuntu@`pulumi stack output ec2PublicIp`
+```
+
+Then access vscode in browser:
+
+http://localhost:8888/
+
 ## SSM
 
 If you want to start EC2 instance in CLI by `SSM`, you need to give inline policy to your aws user.
