@@ -1,0 +1,15 @@
+name: code-server
+root: .
+
+tmux_options: -f tmux/tmux.conf
+
+windows:
+  - main:
+      layout: tiled
+      panes:
+        - tunnel:
+            - printf '\033]2;%s\033\\' 'tunnel'
+            - ./run open_tunnel
+        - server:
+            - printf '\033]2;%s\033\\' 'server'
+            - ./run _start_work

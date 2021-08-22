@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+_ensure_aws() {
+    type aws > /dev/null 2>&1 || pip install awscli
+}
+
+_get_server_address() {
+    ec2Id=$(pulumi stack output ec2Id)
+    echo "${ec2Id}"
+    export ec2IP=$(aws ec2 describe-instances --instance-ids ${ec2Id} | jq '.Reservations[0].Instances[0].PublicIpAddress' | tr -d '"')
+}
+
+_get_server_status() {
+    echo $(aws ec2 describe-instance-status --instance-ids `pulumi stack output ec2Id` | jq '.InstanceStatuses[0].InstanceState.Name')
+}
+
+_start_server() {
+    aws ec2 start-instances --instance-ids `pulumi stack output ec2Id`
+}
+
+_stop_server() {
+    aws ec2 stop-instances --instance-ids `pulumi stack output ec2Id`
+}
+
+_start_tumx() {
+    type tmuxinator > /dev/null 2>&1 || brew install tmuxinator
+    touch ~/.tmux.conf
+    tmuxinator local || tmuxinator start -p .tmuxinator_default.yml
+}
+
+open_tunnel() {
+    _get_server_address
+    echo "server ip is ${ec2IP}"
+    echo "now start tunnel"
+    ssh -nNT -L 8888:localhost:8080 ubuntu@${ec2IP}
+}
+
+_start_work() {
+    _start_server
+    echo "now open browser for working"
+    echo "http://localhost:8888/"
+    open "http://localhost:8888/"
+}
+
+work() {
+    echo "I'm start to work!"
+    _ensure_aws
+    _start_tumx
+}
+
+rest() {
+    echo "I'm start to rest!"
+    _ensure_aws
+    _stop_server
+    tmux kill-session -t code-server
+}
+
+usage() {
+    echo "usage: $0 <command>"
+    echo "work          Go to work"
+    echo "rest          Go to rest"
+    echo "open_tunnel   Open tunnel"
+    exit 1
+}
+
+CMD=${1:-}
+shift || true
+case ${CMD} in
+  work) work ;;
+  rest) rest ;;
+  open_tunnel) open_tunnel ;;
+  _start_work) _start_work ;;
+  *) usage;;
+esac
