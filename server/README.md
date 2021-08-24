@@ -14,6 +14,11 @@ This project is based on AWS to implement the function of [GitHub codespaces](ht
 That's all!
 
 ## Tech Detail
+
+### Architecture
+
+![](https://img.bmpi.dev/dafdc38a-8e97-7daa-d860-4ad78c4d182b.png)
+
 ### Pulumi
 
 ```
