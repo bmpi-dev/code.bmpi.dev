@@ -2,6 +2,8 @@
 
 set -eu -o pipefail
 
+pulumi stack select dev
+
 _ensure_aws() {
     type aws > /dev/null 2>&1 || pip install awscli
 }
