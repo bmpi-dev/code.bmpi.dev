@@ -30,6 +30,7 @@ const sshPort = 22
 const nginxHttpPort = 80
 const nginxHttpsPort = 443
 const codeServerPort = 8080
+const tabninePort = 5555
 
 const pulumiSecurityGroup = new aws.ec2.SecurityGroup(serverName + "-pulumi-secgrp", {
         ingress: [{
@@ -55,6 +56,11 @@ const pulumiSecurityGroup = new aws.ec2.SecurityGroup(serverName + "-pulumi-secg
         }, {
             fromPort: codeServerPort,
             toPort: codeServerPort,
+            protocol: "tcp",
+            cidrBlocks: ["0.0.0.0/0"]
+        }, {
+            fromPort: tabninePort,
+            toPort: tabninePort,
             protocol: "tcp",
             cidrBlocks: ["0.0.0.0/0"]
         }],
