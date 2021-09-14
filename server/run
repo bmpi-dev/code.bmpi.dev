@@ -36,14 +36,14 @@ open_tunnel() {
     _get_server_address
     echo "server ip is ${ec2IP}"
     echo "now start tunnel"
-    ssh -nNT -L 8888:localhost:8080 ubuntu@${ec2IP}
+    ssh -nNT -L 8888:127.0.0.1:8080 ubuntu@${ec2IP}
 }
 
 _start_work() {
     _start_server
     echo "now open browser for working"
-    echo "http://localhost:8888/"
-    open "http://localhost:8888/"
+    echo "http://127.0.0.1:8888/"
+    open "http://127.0.0.1:8888/"
 }
 
 work() {

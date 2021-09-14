@@ -63,12 +63,12 @@ cert: false
 Create a ssh tunnel:
 
 ```
-ssh -nNT -L 8888:localhost:8080 ubuntu@`pulumi stack output ec2PublicIp`
+ssh -nNT -L 8888:127.0.0.1:8080 ubuntu@`pulumi stack output ec2PublicIp`
 ```
 
 Then access vscode in browser:
 
-http://localhost:8888/
+http://127.0.0.1:8888/
 
 ### SSM
 
