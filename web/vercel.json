@@ -1,5 +1,0 @@
-{
-    "redirects": [
-        { "source": "/*", "destination": "https://code-bmpi-dev.koreasouth.cloudapp.azure.com/" }
-    ]
-}
