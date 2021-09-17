@@ -61,7 +61,7 @@ rest() {
 
 ootb() {
     echo "Now entry OOTB VSCode Server!"
-    type az > /dev/null 2>&1 || brew update && brew install azure-cli
+    type az > /dev/null 2>&1 || (brew update && brew install azure-cli)
     az vm start --subscription 'i365-Pay-As-You-Go' -g 'code.bmpi.dev' -n 'code'
     open "https://code-bmpi.koreasouth.cloudapp.azure.com"
 }
