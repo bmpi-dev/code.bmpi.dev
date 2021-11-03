@@ -66,6 +66,10 @@ ootb() {
     open "https://code.bmpi.dev"
 }
 
+ootb_stop() {
+    az vm deallocate --subscription 'i365-Pay-As-You-Go' -g 'code.bmpi.dev' -n 'code'
+}
+
 usage() {
     echo "usage: $0 <command>"
     echo "ootb   Open OOTB server"
